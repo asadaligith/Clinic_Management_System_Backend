@@ -25,10 +25,19 @@ const doctorSchema = new mongoose.Schema(
       type: String,
       required: [true, "Phone number is required"],
     },
-    profileImage: {
+
+    timing: {
       type: String,
-      default: "", // Optional: in case you later add upload functionality
-    },
+      required: [true, "Timing is required"], 
+  },
+    days: {
+      type: String,
+      required: [true, "Days are required"],  
+},
+    date: {
+      type: String,
+      required: [true, "Date is required"],  
+},
   },
   {
     timestamps: true, // Automatically adds createdAt & updatedAt fields
