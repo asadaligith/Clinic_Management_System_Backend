@@ -4,6 +4,7 @@ import connectDB from "./config/db.js";
 import cors from "cors";
 import authRoutes from './routes/authRoutes.js'
 import doctorRoutes from './routes/doctorRoutes.js'
+import appointmentRoutes from './routes/appointmentRoute.js'
 import express from "express";
 
 dotenv.config();
@@ -17,7 +18,7 @@ app.use(express.json());
 app.use("/api/users", authRoutes);
 
 app.use("/api/doctors", doctorRoutes);
-
+app.use("/api/appointments", appointmentRoutes);
 
 mongoose
   .connect(process.env.MONGO_URI, {
