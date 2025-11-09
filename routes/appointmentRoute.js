@@ -3,7 +3,7 @@ import {bookAppointment} from '../controllers/appointmentController.js';
 
 const router = express.Router();
 
-router.post("/book-appointment", bookAppointment);
+router.post("/bookAppointment", bookAppointment);
 // router.get("/get-appointments", getAllAppointments);
 // router.get("/get-appointment/:id", getAppointmentById); 
 
