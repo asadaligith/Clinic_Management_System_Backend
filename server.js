@@ -19,6 +19,8 @@ app.use("/api/users", authRoutes);
 
 app.use("/api/doctors", doctorRoutes);
 app.use("/api/appointments", appointmentRoutes);
+app.use("/api/appointments", appointmentRoutes);
+
 
 mongoose
   .connect(process.env.MONGO_URI, {
