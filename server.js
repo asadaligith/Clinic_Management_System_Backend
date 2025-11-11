@@ -5,6 +5,7 @@ import cors from "cors";
 import authRoutes from './routes/authRoutes.js'
 import doctorRoutes from './routes/doctorRoutes.js'
 import appointmentRoutes from './routes/appointmentRoute.js'
+import patientRoute from './routes/patientRoute.js'
 import express from "express";
 
 dotenv.config();
@@ -19,6 +20,7 @@ app.use("/api/users", authRoutes);
 app.use("/api/doctors", doctorRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/appointments", appointmentRoutes);
+app.use("/api", patientRoute)
 
 
 mongoose
