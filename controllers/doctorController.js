@@ -62,6 +62,23 @@ export const getDoctorById = async (req, res) => {
 };
 
 
+// get appointments for a specific doctor
+export const getAppointmentsByDoctor = async (req, res) => {
+  try {
+    const { doctorId } = req.params;
+    const appointments = await Appointment.find({ doctor: doctorId })
+      .populate("user", "name email phone")
+      .populate("doctor", "name specialization")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, data: appointments });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
 export const cancelDoctor = async (req, res)=>{
   try {
     const { id } = req.params; 

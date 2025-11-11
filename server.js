@@ -8,7 +8,6 @@ import appointmentRoutes from './routes/appointmentRoute.js'
 import express from "express";
 
 dotenv.config();
-connectDB();
 
 const app = express();
 app.use(cors())

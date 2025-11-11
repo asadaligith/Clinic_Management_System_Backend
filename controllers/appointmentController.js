@@ -47,6 +47,22 @@ export const getAppointments = async (req, res) => {
   }
 };
 
+export const getAppointmentsByUser = async (req, res) => {
+  try {
+    // req.user comes from authMiddleware
+    const userEmail = req.user.email;
+
+    const appointments = await Appointment.find({ patientEmail: userEmail })
+      .populate("doctor", "name specialization")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, data: appointments });
+  } catch (error) {
+    console.error("Error fetching appointments by user:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 
 
 // 🗑️ Cancel (Delete) Appointment
