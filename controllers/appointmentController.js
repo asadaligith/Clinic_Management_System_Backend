@@ -1,30 +1,36 @@
 import Appointment from "../models/appointment.js";
+import Doctor from "../models/doctor.js";
 
-export const bookAppointment = async (req , res) => {
-    try{
-       const { patientName, email, phone, cnic, doctor, date } = req.body;
+export const bookAppointment = async (req, res) => {
+  try {
+    const { patientName, email, phone, cnic, doctor, date } = req.body;
 
-       if (!doctor) {
-      return res.status(400).json({ message: "Doctor ID is required" });
+    const doctorInfo = await Doctor.findById(doctor);
+    if (!doctorInfo) {
+      return res.status(404).json({ message: "Doctor not found" });
     }
-       
-       const newAppointment = await Appointment.create({
-        patientName,
-        patientEmail: email,
-        patientPhone: phone,
-        patientCnic: cnic,
-        doctor,                
-        appointmentDate: date,
-        status: "pending"
-});
-        res.status(201).json({ message: "Appointment booked successfully", bookAppointment: newAppointment });
-        console.log("REQ BODY:", req.body);
 
-    } catch(error){
-        res.status(500).json({ message: error.message });
+    const appointment = new Appointment({
+      patientName,
+      patientEmail: email,
+      patientPhone: phone,
+      patientCnic: cnic,
+      doctor,
+      doctorName: doctorInfo.name, // ✅ added doctor name
+      appointmentDate: date,
+    });
 
-    };
-}
+    await appointment.save();
+
+    res.status(201).json({
+      message: "Appointment booked successfully",
+      data: appointment,
+    });
+  } catch (error) {
+    console.error("Error booking appointment:", error);
+    res.status(500).json({ message: "Server error while booking appointment" });
+  }
+};
 
 
 export const getAppointments = async (req, res) => {

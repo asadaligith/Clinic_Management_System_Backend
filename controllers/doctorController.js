@@ -1,4 +1,5 @@
-
+import mongoose from "mongoose";
+import Appointment from "../models/appointment.js";
 import Doctor from "../models/doctor.js";
 
 export const addDoctor = async (req, res) => {
@@ -65,15 +66,20 @@ export const getDoctorById = async (req, res) => {
 // get appointments for a specific doctor
 export const getAppointmentsByDoctor = async (req, res) => {
   try {
-    const { doctorId } = req.params;
-    const appointments = await Appointment.find({ doctor: doctorId })
-      .populate("user", "name email phone")
-      .populate("doctor", "name specialization")
-      .sort({ createdAt: -1 });
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: "Invalid doctor ID" });
+    }
+
+    const appointments = await Appointment.find({ doctor: id })
+      .sort({ appointmentDate: 1 })
+      .populate("doctor", "name specialization");
 
     res.status(200).json({ success: true, data: appointments });
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching appointments:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
