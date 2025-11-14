@@ -1,14 +1,28 @@
 import mongoose from "mongoose";
 import Appointment from "../models/appointment.js";
 import Doctor from "../models/doctor.js";
+import User from "../models/user.js";
+import bcrypt from "bcryptjs";
 
 export const addDoctor = async (req, res) => {
   try {
-    const { name, email, specialization, experience, phone , timing, days, date } = req.body;
-    const existing = await Doctor.findOne({ email });
-    if (existing)
+    const { name, email, specialization, experience, phone, timing, days, date } = req.body;
+
+    // Check if doctor already exists in Doctor Collection
+    const existingDoctor = await Doctor.findOne({ email });
+    if (existingDoctor)
       return res.status(400).json({ message: "Doctor already exists" });
 
+    // Check if doctor exists in User Collection
+    const existingUser = await User.findOne({ email });
+    if (existingUser)
+      return res.status(400).json({ message: "User with this email already exists" });
+
+    // Auto-generate password for doctor
+    const defaultPassword = "doctor123";
+    const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+
+    // Create doctor in Doctor Collection
     const newDoctor = await Doctor.create({
       name,
       email,
@@ -20,13 +34,29 @@ export const addDoctor = async (req, res) => {
       date,
     });
 
-    res.status(201).json({ message: "Doctor added successfully", doctor: newDoctor });
+    // Create doctor in User Collection WITH SAME ID
+    await User.create({
+      _id: newDoctor._id, // same ID
+      name: name,
+      email: email,
+      password: hashedPassword,
+      role: "doctor",
+    });
+
+    res.status(201).json({
+      message: "Doctor added successfully",
+      doctor: newDoctor,
+      loginInfo: {
+        email,
+        password: defaultPassword,
+      }
+    });
+
   } catch (error) {
+    console.error("Add doctor error:", error);
     res.status(500).json({ message: error.message });
   }
 };
-
-
 
 
 
