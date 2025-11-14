@@ -103,3 +103,74 @@ export const cancelAppointment = async (req, res) => {
     });
   }
 };
+
+
+
+export const updateAppointmentStatus = async (req, res) => {
+  try {
+    const { id, status } = req.body;
+
+    // Allowed statuses
+    const allowedStatus = ["pending", "confirmed", "completed", "cancelled"];
+    if (!allowedStatus.includes(status)) {
+      return res.status(400).json({ success: false, message: "Invalid status value" });
+    }
+
+    const updated = await Appointment.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ success: false, message: "Appointment not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Status updated successfully",
+      data: updated
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error updating status",
+      error: error.message,
+    });
+  }
+};
+
+
+export const addPrescription = async (req, res) => {
+  try {
+    const { id, prescription } = req.body;
+
+    const updated = await Appointment.findByIdAndUpdate(
+      id,
+      {
+        prescription,
+        status: "completed",
+      },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ success: false, message: "Appointment not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Prescription saved & appointment completed",
+      data: updated,
+    });
+
+  } catch (error) {
+    console.error("Prescription error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error adding prescription",
+      error: error.message,
+    });
+  }
+};
